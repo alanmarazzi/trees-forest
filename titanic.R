@@ -11,7 +11,7 @@ install.packages(trees_packages)
 
 # Get the data (folder "data" in this repo) and load it. 
 # I always avoid to convert all strings to factors
-titanic <- read.csv("data/train.csv", stringsAsFactors = FALSE)
+titanic <- read.csv("data/train.csv", stringsAsFactors = FALSE, na.strings = "")
 
 # Take a look at the structure of the dataset
 str(titanic)
@@ -32,6 +32,17 @@ titanic$embarked[titanic$embarked == ""] <- NA
 
 # Now convert to factor
 titanic$embarked <- as.factor(titanic$embarked)
+
+# Deal with NA in age variable
+age_prediction <- lm(age ~ survived + pclass + fare, data = titanic)
+summary(age_prediction)
+titanic$age[is.na(titanic$age)] <- predict(
+    age_prediction,
+    newdata = titanic[is.na(titanic$age),]
+    )
+
+# Check NAs in age
+sum(is.na(titanic$age))
 
 # Remove variables that clearly have nothing to do with our prediction setting
 library(dplyr)
