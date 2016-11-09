@@ -6,7 +6,8 @@ trees_packages <- c(
     "evtree",
     "party",
     "randomForest",
-    "intubate"
+    "intubate",
+    "dplyr"
 )
 install.packages(trees_packages)
 
