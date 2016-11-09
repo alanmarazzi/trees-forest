@@ -79,3 +79,25 @@ table(surv_test_logi$Survived)
 write.csv(surv_test_logi, "results/logi.csv", row.names = FALSE)
 # Result is 0.77512
 
+# Temporary copy to avoid masking
+titanicc <- titanic
+library(FFTrees)
+titanic <- titanicc
+rm(titanicc)
+
+fftitanic <- titanic %>% 
+    select(age, pclass, sex, sibsp, fare, survived) %>% 
+    ntbt(FFTrees, survived ~ .)
+
+plot(fftitanic, 
+     main = "Titanic", decision.names = c("Not Survived", "Survived"))
+
+ffpred <- ifelse(test$sex != "male", 1,
+                 ifelse(test$pclass > 2, 0,
+                        ifelse(test$fare < 26.96, 0,
+                               ifelse(test$age >= 21.36, 0, 1))))
+ffpred[is.na(ffpred)] <- 0
+ffpred <- data.frame(PassengerId = test$passengerid, Survived = ffpred)
+write.csv(ffpred, "results/fftree.csv", row.names = FALSE)
+# Result is  0.76555
+
