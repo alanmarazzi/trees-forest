@@ -107,3 +107,18 @@ ffpred <- data.frame(PassengerId = test$passengerid, Survived = ffpred)
 write.csv(ffpred, "results/fftree.csv", row.names = FALSE)
 # Result is 0.76555
 
+library(party)
+
+partyTitanic <- titanic %>% 
+    select(age, pclass, sex, sibsp, fare, survived) %>% 
+    ntbt(ctree, as.factor(survived) ~ .)
+
+plot(partyTitanic)
+
+party_pred <- Predict(partyTitanic, newdata = test)
+
+party_pred <- as.numeric(party_pred) - 1
+
+party_pred <- data.frame(PassengerId = test$passengerid, Survived = party_pred)
+write.csv(party_pred, "results/party.csv", row.names = FALSE)
+# Result is 0.73684
