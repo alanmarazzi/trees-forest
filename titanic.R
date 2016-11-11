@@ -115,6 +115,10 @@ partyTitanic <- titanic %>%
 
 plot(partyTitanic)
 
+train_party <- Predict(partyTitanic)
+
+table(tree = train_party, real = titanic$survived)
+
 party_pred <- Predict(partyTitanic, newdata = test)
 
 party_pred <- as.numeric(party_pred) - 1
@@ -122,3 +126,17 @@ party_pred <- as.numeric(party_pred) - 1
 party_pred <- data.frame(PassengerId = test$passengerid, Survived = party_pred)
 write.csv(party_pred, "results/party.csv", row.names = FALSE)
 # Result is 0.73684
+
+library(evtree)
+
+set.seed(100)
+evotitanic <- titanic %>% 
+    select(age, pclass, sibsp, sex, fare, survived, parch) %>% 
+    ntbt(evtree, as.factor(survived) ~ .)
+
+table(predict(evotitanic), titanic$survived)
+
+evo_pred <- as.numeric(predict(evotitanic, test)) - 1
+
+evo_pred <- data.frame(PassengerId = test$passengerid, Survived = evo_pred)
+write.csv(evo_pred, "results/evo.csv", row.names = FALSE)
