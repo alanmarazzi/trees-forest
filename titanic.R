@@ -3,11 +3,11 @@
 # Install needed packages
 trees_packages <- c(
     "FFTrees",
-    "evtree",
     "party",
     "randomForest",
     "intubate",
-    "dplyr"
+    "dplyr",
+    "modelr"
 )
 install.packages(trees_packages)
 
@@ -127,16 +127,9 @@ party_pred <- data.frame(PassengerId = test$passengerid, Survived = party_pred)
 write.csv(party_pred, "results/party.csv", row.names = FALSE)
 # Result is 0.73684
 
-library(evtree)
-
-set.seed(100)
-evotitanic <- titanic %>% 
-    select(age, pclass, sibsp, sex, fare, survived, parch) %>% 
-    ntbt(evtree, as.factor(survived) ~ .)
-
-table(predict(evotitanic), titanic$survived)
-
-evo_pred <- as.numeric(predict(evotitanic, test)) - 1
-
-evo_pred <- data.frame(PassengerId = test$passengerid, Survived = evo_pred)
-write.csv(evo_pred, "results/evo.csv", row.names = FALSE)
+party_feat <- titanic %>% 
+    select(age, pclass, sex, sibsp, fare, survived) %>% 
+    ntbt(ctree, as.factor(survived)~., ctree_control(maxdepth = 4))
+titanic_appoggio <- titanic %>% 
+    select(age, pclass, sex, sibsp, fare, survived)
+party_feat <- ctree(as.factor(survived) ~., data = titanic_appoggio, ctree_control(maxdepth = 3))
