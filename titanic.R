@@ -127,9 +127,41 @@ party_pred <- data.frame(PassengerId = test$passengerid, Survived = party_pred)
 write.csv(party_pred, "results/party.csv", row.names = FALSE)
 # Result is 0.73684
 
-party_feat <- titanic %>% 
-    select(age, pclass, sex, sibsp, fare, survived) %>% 
-    ntbt(ctree, as.factor(survived)~., ctree_control(maxdepth = 4))
-titanic_appoggio <- titanic %>% 
-    select(age, pclass, sex, sibsp, fare, survived)
-party_feat <- ctree(as.factor(survived) ~., data = titanic_appoggio, ctree_control(maxdepth = 3))
+# Bagging
+library(randomForest)
+set.seed(123)
+titanic_bag <- titanic %>% 
+    select(survived, age, pclass, sex, sibsp, fare, parch) %>% 
+    ntbt_randomForest(as.factor(survived) ~ ., mtry = 6)
+
+test$age[is.na(test$age)] <- median(test$age, na.rm = TRUE)
+    
+bag_pred <- predict(titanic_bag, test)
+
+sum(is.na(bag_pred))
+bag_pred[is.na(bag_pred)] <- 1
+bag_pred <- data.frame(PassengerId = test$passengerid, Survived = bag_pred, row.names = 1:length(bag_pred))
+write.csv(bag_pred, "results/bagging.csv", row.names = FALSE)
+# Result is 0.66507
+
+# RandomForest
+set.seed(456)
+titanic_rf <- titanic %>% 
+    select(survived, age, pclass, sex, sibsp, fare, parch) %>% 
+    ntbt_randomForest(as.factor(survived) ~ ., mtry = 3, n.trees = 5000)
+
+rf_pred <- predict(titanic_rf, test)
+rf_pred[is.na(rf_pred)] <- 1
+rf_pred <- data.frame(PassengerId = test$passengerid, Survived = rf_pred, row.names = 1:length(rf_pred))
+write.csv(rf_pred, "results/rf.csv", row.names = FALSE)
+
+set.seed(415)
+titanic_rf_party <- titanic %>% 
+    select(survived, age, pclass, sex, sibsp, fare, parch) %>% 
+    ntbt(cforest, as.factor(survived) ~ ., 
+            controls = cforest_unbiased(ntree = 5000, mtry = 3))
+
+rf_party_pred <- predict(titanic_rf_party, test, OOB = TRUE, type = "response")
+rf_party_pred <- data.frame(PassengerId = test$passengerid, Survived = rf_party_pred)
+write.csv(rf_party_pred, "results/rf_party.csv", row.names = FALSE)
+# Result is 0.77033
