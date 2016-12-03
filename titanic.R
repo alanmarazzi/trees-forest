@@ -7,7 +7,7 @@ trees_packages <- c(
     "randomForest",
     "intubate",
     "dplyr",
-    "modelr"
+    "gbm"
 )
 install.packages(trees_packages)
 
@@ -123,7 +123,8 @@ party_pred <- Predict(partyTitanic, newdata = test)
 
 party_pred <- as.numeric(party_pred) - 1
 
-party_pred <- data.frame(PassengerId = test$passengerid, Survived = party_pred)
+party_pred <- data.frame(PassengerId = test$passengerid, 
+                         Survived = party_pred)
 write.csv(party_pred, "results/party.csv", row.names = FALSE)
 # Result is 0.73684
 
@@ -140,7 +141,9 @@ bag_pred <- predict(titanic_bag, test)
 
 sum(is.na(bag_pred))
 bag_pred[is.na(bag_pred)] <- 1
-bag_pred <- data.frame(PassengerId = test$passengerid, Survived = bag_pred, row.names = 1:length(bag_pred))
+bag_pred <- data.frame(PassengerId = test$passengerid, 
+                       Survived = bag_pred, 
+                       row.names = 1:length(bag_pred))
 write.csv(bag_pred, "results/bagging.csv", row.names = FALSE)
 # Result is 0.66507
 
@@ -154,14 +157,38 @@ rf_pred <- predict(titanic_rf, test)
 rf_pred[is.na(rf_pred)] <- 1
 rf_pred <- data.frame(PassengerId = test$passengerid, Survived = rf_pred, row.names = 1:length(rf_pred))
 write.csv(rf_pred, "results/rf.csv", row.names = FALSE)
+# Result is 0.74641
 
+# RF with inferential trees
 set.seed(415)
 titanic_rf_party <- titanic %>% 
     select(survived, age, pclass, sex, sibsp, fare, parch) %>% 
     ntbt(cforest, as.factor(survived) ~ ., 
             controls = cforest_unbiased(ntree = 5000, mtry = 3))
 
-rf_party_pred <- predict(titanic_rf_party, test, OOB = TRUE, type = "response")
-rf_party_pred <- data.frame(PassengerId = test$passengerid, Survived = rf_party_pred)
+rf_party_pred <- predict(titanic_rf_party, 
+                         test, 
+                         OOB = TRUE, 
+                         type = "response")
+rf_party_pred <- data.frame(PassengerId = test$passengerid, 
+                            Survived = rf_party_pred)
 write.csv(rf_party_pred, "results/rf_party.csv", row.names = FALSE)
 # Result is 0.77033
+
+# Boosting
+library(gbm)
+set.seed(999)
+titanic_boost <- titanic %>% 
+    select(survived, age, pclass, sex, sibsp, fare, parch) %>% 
+    ntbt(gbm, survived ~ .,
+         distribution = "bernoulli",
+         n.trees = 5000,
+         interaction.depth = 3)
+
+boost_pred <- predict(titanic_boost, test, n.trees = 5000, type = "response")
+test_boost <- rep(0, nrow(test))
+test_boost[boost_pred >= .5] <- 1
+test_boost <- data.frame(PassengerId = test$passengerid,
+                         Survived = test_boost)
+write.csv(test_boost, "results/test_boost.csv", row.names = FALSE)
+# Result is 0.76077
