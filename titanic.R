@@ -179,7 +179,7 @@ titanic_rf <- titanic %>%
 # Prediction
 rf_pred <- predict(titanic_rf, test)
 rf_pred[is.na(rf_pred)] <- 1
-rf_pred <- data.frame(PassengerId = test$passengerid, Survived = rf_pred, row.names = 1:length(rf_pred))
+rf_pred <- data.frame(PassengerId = test$passengerid, Survived = rf_pred)
 write.csv(rf_pred, "results/rf.csv", row.names = FALSE)
 # Result is 0.74641
 
