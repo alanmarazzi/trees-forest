@@ -26,7 +26,7 @@ names(titanic) <- tolower(names(titanic))
 titanic$sex <- as.factor(titanic$sex)
 titanic$embarked <- as.factor(titanic$embarked)
 
-# The age variable has some missing values, x%
+# The age variable has some missing values, 19.86%
 mean(is.na(titanic$age))
 
 # Deal with NAs in age variable by substituting them with a linear regression
@@ -171,7 +171,7 @@ set.seed(456)
 # Random Forest model building
 titanic_rf <- titanic %>% 
     select(survived, age, pclass, sex, sibsp, fare, parch) %>% 
-    ntbt_randomForest(as.factor(survived) ~ ., mtry = 3, n.trees = 5000)
+    ntbt_randomForest(as.factor(survived) ~ ., mtry = 3, ntree = 5000)
 
 # Prediction
 rf_pred <- predict(titanic_rf, test)
