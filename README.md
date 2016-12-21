@@ -1,7 +1,7 @@
 # Don't get lost in a forest
 
-Reference for "Don't get lost in a forest" post on rdisorder.eu
+Reference repo for "Don't get lost in a forest" post on [rdisorder.eu](http://wp.me/p7RraT-63).
 
-## Work in progress
+## What you'll find
 
-**For more info refer to [project page](https://alanmarazzi.github.io/trees-forest/)**
+Full code to follow along the post, data stored directly in the `/data` folder and a [project page](https://alanmarazzi.github.io/trees-forest/) explaining how to run the code and giving an intro to `dplyr` and `intubate` packages.
