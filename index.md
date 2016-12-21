@@ -1,16 +1,16 @@
 # Don't get lost in a forest
 
-Reference for "Don't get lost in a forest" post on [rdisorder.eu](http://rdisorder.eu)
+It's easy to get lost with **tree-based models** and their many implementations in **R**. With the [post](http://wp.me/p7RraT-63) I try to shed some light on principal methods and algorithms to exploit the power and simplicity of these models.
 
-This will be an intro to tree-based models in R.
+## How to use this repo
 
-## Work in progress
+My advice is to follow along the post on [rDisorder](http://wp.me/p7RraT-63) with [full code](https://github.com/alanmarazzi/trees-forest/blob/master/titanic.R) on your side.
 
-The project will be ready by the end of 2016
-&nbsp;
-&nbsp;
+You can clone the repo (if you need help with cloning refer to [this](https://help.github.com/articles/cloning-a-repository/)) to have data and code on your local storage. Or you can just load data from the `data` folder in the repo itself.
 
-### In the meantime you can get a look at the brief intro below
+There's also a [notebook implementation on Kaggle](https://www.kaggle.com/alanre/titanic/don-t-get-lost-in-a-forest), you can fork the notebook, run it, try it, experiment with it.
+
+### Below an intro to machine learning pipelines
 
 &nbsp;
 
