@@ -2,7 +2,7 @@ title: Don't get lost in a forest
 description: Reference repo for "Don't get lost in a forest" post
 google_analytics: 
 show_downloads: true
-theme: jekyll-theme-architect
+theme: jekyll-theme-cayman
 
 gems:
   - jekyll-mentions
